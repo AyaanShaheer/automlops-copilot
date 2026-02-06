@@ -1,0 +1,39 @@
+# Core dependencies
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+
+# LLM and AI
+anthropic
+openai
+langchain
+langchain-community
+langchain-google-genai
+google-genai
+groq
+
+# Code analysis
+gitpython
+tree-sitter
+tree-sitter-python
+pydriller
+
+# Utilities
+redis
+celery
+python-dotenv
+requests
+jinja2
+pyyaml
+httpx
+
+# Database
+psycopg2-binary
+sqlalchemy
+
+# Storage
+boto3
+
+# Logging
+loguru

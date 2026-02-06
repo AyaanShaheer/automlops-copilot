@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+vendor/
+*.test
+*.out
+
+# Node
+node_modules/
+.next/
+out/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kubernetes secrets
+*-secret.yaml
+secrets/
+
+# Temporary files
+tmp/
+temp/
+*.log
+
+# Model artifacts
+*.pkl
+*.pth
+*.h5
+*.onnx
+models/
+
+# DO credentials
+.do_token

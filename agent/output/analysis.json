@@ -1,0 +1,56 @@
+{
+  "repo_url": "https://github.com/ageron/handson-ml2",
+  "repo_path": "/tmp/repos/handson-ml2",
+  "python_files": [
+    "docker/jupyter_notebook_config.py"
+  ],
+  "notebooks": [
+    "math_linear_algebra.ipynb",
+    "07_ensemble_learning_and_random_forests.ipynb",
+    "extra_autodiff.ipynb",
+    "index.ipynb",
+    "09_unsupervised_learning.ipynb",
+    "02_end_to_end_machine_learning_project.ipynb",
+    "06_decision_trees.ipynb",
+    "19_training_and_deploying_at_scale.ipynb",
+    "17_autoencoders_and_gans.ipynb",
+    "tools_matplotlib.ipynb",
+    "01_the_machine_learning_landscape.ipynb",
+    "13_loading_and_preprocessing_data.ipynb",
+    "11_training_deep_neural_networks.ipynb",
+    "math_differential_calculus.ipynb",
+    "18_reinforcement_learning.ipynb",
+    "05_support_vector_machines.ipynb",
+    "08_dimensionality_reduction.ipynb",
+    "16_nlp_with_rnns_and_attention.ipynb",
+    "04_training_linear_models.ipynb",
+    "tools_pandas.ipynb",
+    "14_deep_computer_vision_with_cnns.ipynb",
+    "extra_gradient_descent_comparison.ipynb",
+    "15_processing_sequences_using_rnns_and_cnns.ipynb",
+    "03_classification.ipynb",
+    "12_custom_models_and_training_with_tensorflow.ipynb",
+    "tools_numpy.ipynb",
+    "10_neural_nets_with_keras.ipynb"
+  ],
+  "requirements_files": [
+    "environment.yml",
+    "requirements.txt"
+  ],
+  "config_files": [
+    "docker/docker-compose.yml"
+  ],
+  "model_files": [],
+  "data_files": [
+    "datasets/lifesat/oecd_bli_2015.csv",
+    "datasets/lifesat/gdp_per_capita.csv",
+    "datasets/housing/housing.csv",
+    "datasets/titanic/test.csv",
+    "datasets/titanic/train.csv",
+    "datasets/inception/imagenet_class_names.txt"
+  ],
+  "readme": "datasets/jsb_chorales/README.md",
+  "entry_points": [],
+  "ml_frameworks": [],
+  "file_tree": "handson-ml2\n\u251c\u2500\u2500 datasets\n\u2502   \u251c\u2500\u2500 housing\n\u2502   \u2502   \u251c\u2500\u2500 README.md\n\u2502   \u2502   \u251c\u2500\u2500 housing.csv\n\u2502   \u2502   \u2514\u2500\u2500 housing.tgz\n\u2502   \u251c\u2500\u2500 inception\n\u2502   \u2502   \u2514\u2500\u2500 imagenet_class_names.txt\n\u2502   \u251c\u2500\u2500 jsb_chorales\n\u2502   \u2502   \u251c\u2500\u2500 README.md\n\u2502   \u2502   \u2514\u2500\u2500 jsb_chorales.tgz\n\u2502   \u251c\u2500\u2500 lifesat\n\u2502   \u2502   \u251c\u2500\u2500 README.md\n\u2502   \u2502   \u251c\u2500\u2500 gdp_per_capita.csv\n\u2502   \u2502   \u2514\u2500\u2500 oecd_bli_2015.csv\n\u2502   \u2514\u2500\u2500 titanic\n\u2502       \u251c\u2500\u2500 test.csv\n\u2502       \u2514\u2500\u2500 train.csv\n\u251c\u2500\u2500 docker\n\u2502   \u251c\u2500\u2500 bin\n\u2502   \u2502   \u251c\u2500\u2500 nbclean_checkpoints\n\u2502   \u2502   \u251c\u2500\u2500 nbdiff_checkpoint\n\u2502   \u2502   \u251c\u2500\u2500 rm_empty_subdirs\n\u2502   \u2502   \u2514\u2500\u2500 tensorboard\n\u2502   \u251c\u2500\u2500 Dockerfile\n\u2502   \u251c\u2500\u2500 Dockerfile.gpu\n\u2502   \u251c\u2500\u2500 Makefile\n\u2502   \u251c\u2500\u2500 README.md\n\u2502   \u251c\u2500\u2500 bashrc.bash\n\u2502   \u251c\u2500\u2500 docker-compose.yml\n\u2502   \u2514\u2500\u2500 jupyter_notebook_config.py\n\u251c\u2500\u2500 images\n\u2502   \u251c\u2500\u2500 ann\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 autoencoders\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 classification\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 cnn\n\u2502   \u2502   \u251c\u2500\u2500 README\n\u2502   \u2502   \u2514\u2500\u2500 test_image.png\n\u2502   \u251c\u2500\u2500 decision_trees\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 deep\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 distributed\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 end_to_end_project\n\u2502   \u2502   \u251c\u2500\u2500 README\n\u2502   \u2502   \u2514\u2500\u2500 california.png\n\u2502   \u251c\u2500\u2500 ensembles\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 fundamentals\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 nlp\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 rl\n\u2502   \u2502   \u251c\u2500\u2500 README\n\u2502   \u2502   \u2514\u2500\u2500 breakout.gif\n\u2502   \u251c\u2500\u2500 rnn\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 svm\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 tensorflow\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u251c\u2500\u2500 training_linear_models\n\u2502   \u2502   \u2514\u2500\u2500 README\n\u2502   \u2514\u2500\u2500 unsupervised_learning\n\u2502       \u251c\u2500\u2500 README\n\u2502       \u2514\u2500\u2500 ladybug.png\n\u251c\u2500\u2500 01_the_machine_learning_landscape.ipynb\n\u251c\u2500\u2500 02_end_to_end_machine_learning_project.ipynb\n\u251c\u2500\u2500 03_classification.ipynb\n\u251c\u2500\u2500 04_training_linear_models.ipynb\n\u251c\u2500\u2500 05_support_vector_machines.ipynb\n\u251c\u2500\u2500 06_decision_trees.ipynb\n\u251c\u2500\u2500 07_ensemble_learning_and_random_forests.ipynb\n\u251c\u2500\u2500 08_dimensionality_reduction.ipynb\n\u251c\u2500\u2500 09_unsupervised_learning.ipynb\n\u251c\u2500\u2500 10_neural_nets_with_keras.ipynb\n\u251c\u2500\u2500 11_training_deep_neural_networks.ipynb\n\u251c\u2500\u2500 12_custom_models_and_training_with_tensorflow.ipynb\n\u251c\u2500\u2500 13_loading_and_preprocessing_data.ipynb\n\u251c\u2500\u2500 14_deep_computer_vision_with_cnns.ipynb\n\u251c\u2500\u2500 15_processing_sequences_using_rnns_and_cnns.ipynb\n\u251c\u2500\u2500 16_nlp_with_rnns_and_attention.ipynb\n\u251c\u2500\u2500 17_autoencoders_and_gans.ipynb\n\u251c\u2500\u2500 18_reinforcement_learning.ipynb\n\u251c\u2500\u2500 19_training_and_deploying_at_scale.ipynb\n\u251c\u2500\u2500 INSTALL.md\n\u251c\u2500\u2500 LICENSE\n\u251c\u2500\u2500 README.md\n\u251c\u2500\u2500 apt.txt\n\u251c\u2500\u2500 book_equations.pdf\n\u251c\u2500\u2500 changes_in_2nd_edition.md\n\u251c\u2500\u2500 environment.yml\n\u251c\u2500\u2500 extra_autodiff.ipynb\n\u251c\u2500\u2500 extra_gradient_descent_comparison.ipynb\n\u251c\u2500\u2500 index.ipynb\n\u251c\u2500\u2500 math_differential_calculus.ipynb\n\u251c\u2500\u2500 math_linear_algebra.ipynb\n\u251c\u2500\u2500 ml-project-checklist.md\n\u251c\u2500\u2500 requirements.txt\n\u251c\u2500\u2500 tools_matplotlib.ipynb\n\u251c\u2500\u2500 tools_numpy.ipynb\n\u2514\u2500\u2500 tools_pandas.ipynb"
+}

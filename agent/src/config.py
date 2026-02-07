@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # Application
     TEMP_REPO_DIR: str = "/tmp/repos"
     LOG_LEVEL: str = "INFO"
+    ORCHESTRATOR_URL: str = "http://localhost:8080"
     
     class Config:
         env_file = ".env"

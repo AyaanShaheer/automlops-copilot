@@ -1,0 +1,39 @@
+# Agent package (local)
+-e ../agent
+
+# Core dependencies (from agent)
+pydantic
+pydantic-settings
+fastapi
+uvicorn
+
+# LLM and AI
+anthropic
+openai
+langchain
+langchain-community
+langchain-google-genai
+google-genai
+groq
+
+# Code analysis
+gitpython
+tree-sitter
+tree-sitter-python
+pydriller
+
+# Utilities
+redis
+python-dotenv
+requests
+jinja2
+pyyaml
+httpx
+loguru
+
+# Database
+psycopg2-binary
+sqlalchemy
+
+# Storage
+boto3

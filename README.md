@@ -27,6 +27,10 @@ No manual configuration. No boilerplate. Just intelligent automation.
 ## 🏗️ System Architecture
 
 ```
+<img width="2816" height="1536" alt="Gemini_Generated_Image_9wwzk69wwzk69wwz" src="https://github.com/user-attachments/assets/f44e24d3-3e2d-4546-800c-ff2dcc8c3f98" />
+```
+
+```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           USER INTERFACE                                │
 │                    React + Vite (Port 80)                               │
@@ -592,4 +596,5 @@ For major changes, please open an issue first to discuss.
 **Built with ❤️ for the DigitalOcean AI Hackathon 2026**
 
 **⭐ Star this repo if you find it useful!**
+
 

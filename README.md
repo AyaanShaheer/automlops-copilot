@@ -537,15 +537,14 @@ kubectl logs -n automlops -l app=worker --tail=50
 
 | Name | Role | Responsibilities |
 |------|------|------------------|
-| **Ayaan Shaheer** | Lead DevOps & Backend | Kubernetes, Docker, Go orchestrator, infrastructure |
+| **Ayaan Shaheer** | Lead DevOps & AI Systems Engineer | Kubernetes, Docker, Go orchestrator, infrastructure |
 | **Saif** | Frontend Engineer | React UI, user experience, real-time updates |
 | **Zain** | AI/ML Engineer | Python worker, LLM integration, code generation |
-| **Afzaal** | ML Engineer | Repository analysis, framework detection |
+| **Afzaal** | Project Coordinator | Project Management, Documentation, Presentation |
 
 ---
 
 ## 🏆 Why This Project Stands Out
-
 1. **🎯 Real Production Use Case** - Solves actual MLOps pain points
 2. **🤖 AI-Powered** - Not just templates, intelligent code generation
 3. **☁️ Full Cloud Stack** - DOKS, Spaces, Container Registry, LoadBalancer
@@ -594,4 +593,3 @@ For major changes, please open an issue first to discuss.
 
 **⭐ Star this repo if you find it useful!**
 
-```

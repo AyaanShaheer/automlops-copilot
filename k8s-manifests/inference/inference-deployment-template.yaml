@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-{{JOB_ID}}
+  namespace: automlops
+  labels:
+    app: automlops-inference
+    job-id: "{{JOB_ID}}"
+spec:
+  replicas: {{REPLICAS}}
+  selector:
+    matchLabels:
+      app: automlops-inference
+      job-id: "{{JOB_ID}}"
+  template:
+    metadata:
+      labels:
+        app: automlops-inference
+        job-id: "{{JOB_ID}}"
+    spec:
+      containers:
+        - name: inference-api
+          image: {{REGISTRY_URL}}/model-{{JOB_ID}}:latest
+          command:
+            - uvicorn
+            - app:app
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8000"
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          env:
+            - name: JOB_ID
+              value: "{{JOB_ID}}"
+            - name: MODEL_PATH
+              value: "/models/model.pkl"
+            - name: S3_BUCKET
+              value: "{{S3_BUCKET}}"
+            - name: S3_ENDPOINT
+              value: "{{S3_ENDPOINT}}"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: secret-access-key
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      initContainers:
+        - name: download-model
+          image: amazon/aws-cli:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Downloading model from S3..."
+              aws s3 cp s3://{{S3_BUCKET}}/jobs/{{JOB_ID}}/model.pkl /models/model.pkl --endpoint-url=https://{{S3_ENDPOINT}}
+              echo "Model downloaded successfully"
+              ls -lh /models/
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: secret-access-key
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      volumes:
+        - name: model-cache
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inference-{{JOB_ID}}
+  namespace: automlops
+  labels:
+    app: automlops-inference
+    job-id: "{{JOB_ID}}"
+spec:
+  type: LoadBalancer
+  selector:
+    app: automlops-inference
+    job-id: "{{JOB_ID}}"
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
+  sessionAffinity: None

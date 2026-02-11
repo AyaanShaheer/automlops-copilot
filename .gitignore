@@ -88,3 +88,6 @@ models/
 
 # DO credentials
 .do_token
+
+k8s-manifests/build/docker-registry-secret.yaml.example
+deployment/production-config/

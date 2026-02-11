@@ -1,5 +1,3 @@
-# Agent package (local)
--e ../agent
 
 # Core dependencies (from agent)
 pydantic
@@ -37,3 +35,7 @@ sqlalchemy
 
 # Storage
 boto3
+
+# Kubernetes
+kubernetes
+jinja2

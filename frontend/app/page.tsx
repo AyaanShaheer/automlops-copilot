@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { jobsApi, Job } from '@/lib/api';
-import { Plus, RefreshCw, ExternalLink, Copy, Check, Trash2 } from 'lucide-react';
+import { jobsApi, Job, ArtifactsResponse } from '@/lib/api';
+import { Plus, RefreshCw, ExternalLink, Copy, Check, Trash2, FileCode, Eye } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import CodeViewer from '@/components/CodeViewer';
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -11,6 +12,8 @@ export default function Home() {
   const [repoUrl, setRepoUrl] = useState('');
   const [creating, setCreating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [viewingArtifacts, setViewingArtifacts] = useState<ArtifactsResponse | null>(null);
+  const [loadingArtifacts, setLoadingArtifacts] = useState<string | null>(null);
 
   const fetchJobs = async () => {
     try {
@@ -54,6 +57,19 @@ export default function Home() {
       fetchJobs();
     } catch (error) {
       console.error('Failed to delete job:', error);
+    }
+  };
+
+  const handleViewCode = async (jobId: string) => {
+    try {
+      setLoadingArtifacts(jobId);
+      const artifacts = await jobsApi.getArtifacts(jobId);
+      setViewingArtifacts(artifacts);
+    } catch (error) {
+      console.error('Failed to fetch artifacts:', error);
+      alert('Failed to load artifacts. Make sure the job has completed.');
+    } finally {
+      setLoadingArtifacts(null);
     }
   };
 
@@ -144,6 +160,22 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="text-gray-400 text-sm">{formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</p>
+                    
+                    {job.status === 'completed' && (
+                      <button
+                        onClick={() => handleViewCode(job.id)}
+                        disabled={loadingArtifacts === job.id}
+                        className="p-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 transition-colors disabled:opacity-50"
+                        title="View generated code"
+                      >
+                        {loadingArtifacts === job.id ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    )}
+                    
                     <button onClick={() => handleDelete(job.id)} className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -192,6 +224,15 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {/* Code Viewer Modal */}
+      {viewingArtifacts && (
+        <CodeViewer
+          artifacts={viewingArtifacts.artifacts}
+          jobId={viewingArtifacts.job_id}
+          onClose={() => setViewingArtifacts(null)}
+        />
+      )}
     </div>
   );
 }

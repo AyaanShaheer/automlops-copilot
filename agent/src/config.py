@@ -28,6 +28,19 @@ class Settings(BaseSettings):
     DO_SPACES_REGION: str = "nyc3"
     DO_SPACES_BUCKET: str = "automlops-models"
     
+    # S3 Configuration
+    S3_BUCKET: str = "automlops-models"
+    S3_ENDPOINT: str = "nyc3.digitaloceanspaces.com"
+    ENABLE_S3_UPLOAD: bool = False
+    
+    # Kubernetes & Deployment
+    ENABLE_K8S_BUILD: bool = False
+    REGISTRY_URL: str = "registry.digitalocean.com/automlops"
+    ENABLE_DEPLOYMENT: bool = False
+    
+    # Training Configuration
+    ENABLE_TRAINING: bool = False
+    
     # Application
     TEMP_REPO_DIR: str = "/tmp/repos"
     LOG_LEVEL: str = "INFO"

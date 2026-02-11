@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inference-config
+  namespace: automlops
+data:
+  # Default scaling configuration
+  DEFAULT_REPLICAS: "2"
+  MIN_REPLICAS: "1"
+  MAX_REPLICAS: "10"
+  
+  # Resource limits
+  DEFAULT_CPU_REQUEST: "250m"
+  DEFAULT_CPU_LIMIT: "1000m"
+  DEFAULT_MEMORY_REQUEST: "512Mi"
+  DEFAULT_MEMORY_LIMIT: "2Gi"
+  
+  # Health check configuration
+  LIVENESS_INITIAL_DELAY: "30"
+  READINESS_INITIAL_DELAY: "10"
+  
+  # Model caching
+  ENABLE_MODEL_CACHE: "true"
+  CACHE_SIZE_MB: "1024"

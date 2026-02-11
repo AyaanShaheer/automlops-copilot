@@ -2,7 +2,7 @@ from typing import Optional
 from google import genai
 from groq import Groq
 from loguru import logger
-from src.config import settings
+from ..config import settings
 
 
 class LLMClient:

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: training-config
+  namespace: automlops
+data:
+  S3_BUCKET: "automlops-models"
+  S3_ENDPOINT: "nyc3.digitaloceanspaces.com"
+  S3_REGION: "nyc3"
+  DEFAULT_TRAINING_TIMEOUT: "3600"  # 1 hour
+  DEFAULT_GPU_TYPE: "V100"

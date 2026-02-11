@@ -1,0 +1,23 @@
+# GPU Node Configuration for Gradient
+# This configures GPU nodes from Paperspace Gradient
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpu-node-config
+  namespace: automlops
+data:
+  # Gradient GPU types
+  GPU_TYPES: |
+    - name: "V100"
+      memory: "16GB"
+      cost_per_hour: "2.30"
+    - name: "A100"
+      memory: "40GB"
+      cost_per_hour: "3.09"
+    - name: "RTX5000"
+      memory: "16GB"
+      cost_per_hour: "0.82"
+  
+  # Default GPU selection
+  DEFAULT_GPU: "V100"

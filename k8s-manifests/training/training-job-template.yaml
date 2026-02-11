@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-{{JOB_ID}}
+  namespace: automlops
+  labels:
+    app: automlops-training
+    job-id: "{{JOB_ID}}"
+spec:
+  ttlSecondsAfterFinished: 7200  # Clean up after 2 hours
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: automlops-training
+        job-id: "{{JOB_ID}}"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: trainer
+          image: {{REGISTRY_URL}}/model-{{JOB_ID}}:latest
+          command:
+            - python
+            - training_wrapper.py
+          env:
+            - name: JOB_ID
+              value: "{{JOB_ID}}"
+            - name: MODEL_OUTPUT_PATH
+              value: "/models/{{JOB_ID}}"
+            - name: S3_BUCKET
+              value: "{{S3_BUCKET}}"
+            - name: S3_ENDPOINT
+              value: "{{S3_ENDPOINT}}"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: secret-access-key
+          volumeMounts:
+            - name: model-storage
+              mountPath: /models
+          resources:
+            requests:
+              cpu: "2000m"
+              memory: "8Gi"
+              nvidia.com/gpu: "1"  # Request 1 GPU
+            limits:
+              cpu: "4000m"
+              memory: "16Gi"
+              nvidia.com/gpu: "1"
+      volumes:
+        - name: model-storage
+          emptyDir: {}
+      # Node selector for GPU nodes
+      nodeSelector:
+        gpu: "true"
+      # Tolerations for GPU nodes
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule

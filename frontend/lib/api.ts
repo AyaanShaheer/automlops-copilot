@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const isServer = typeof window === 'undefined';
+const API_URL = isServer
+  ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080')
+  : '';
 
 export interface Job {
   id: string;
@@ -31,6 +34,17 @@ export interface ListJobsResponse {
   total: number;
 }
 
+export interface ArtifactsResponse {
+  job_id: string;
+  artifacts: {
+    'Dockerfile'?: string;
+    'training_wrapper.py'?: string;
+    'app.py'?: string;
+    'requirements.txt'?: string;
+    'analysis.json'?: string;
+  };
+}
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -56,5 +70,14 @@ export const jobsApi = {
 
   deleteJob: async (id: string): Promise<void> => {
     await api.delete(`/api/jobs/${id}`);
+  },
+
+  getArtifacts: async (id: string): Promise<ArtifactsResponse> => {
+    const response = await api.get<ArtifactsResponse>(`/api/jobs/${id}/artifacts`);
+    return response.data;
+  },
+
+  downloadArtifact: (id: string, filename: string): string => {
+    return `${API_URL}/api/jobs/${id}/artifacts/${filename}`;
   },
 };

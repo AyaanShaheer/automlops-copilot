@@ -1,6 +1,6 @@
 from typing import Dict
 from loguru import logger
-from src.llm.llm_client import LLMClient
+from ..llm.llm_client import LLMClient
 
 class FastAPIGenerator:
     """Generates FastAPI inference service"""

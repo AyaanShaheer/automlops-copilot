@@ -7,6 +7,7 @@ import (
 	"github.com/AyaanShaheer/automlops-copilot/orchestrator/internal/database"
 	"github.com/AyaanShaheer/automlops-copilot/orchestrator/internal/handlers"
 	"github.com/AyaanShaheer/automlops-copilot/orchestrator/internal/queue"
+	"github.com/AyaanShaheer/automlops-copilot/orchestrator/internal/storage"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -33,6 +34,11 @@ func main() {
 	}
 	defer queue.Close()
 
+	// Initialize S3 Client
+	if err := storage.InitS3(cfg); err != nil {
+		log.Printf("Warning: Failed to initialize S3 client: %v", err)
+	}
+
 	// Setup Gin router
 	router := gin.Default()
 
@@ -54,6 +60,11 @@ func main() {
 		api.GET("/jobs/:id", handlers.GetJob)
 		api.PATCH("/jobs/:id/status", handlers.UpdateJobStatus)
 		api.DELETE("/jobs/:id", handlers.DeleteJob)
+
+		// Artifact routes
+		api.GET("/jobs/:id/artifacts", handlers.GetArtifacts)
+		api.GET("/jobs/:id/artifacts/:filename", handlers.DownloadArtifact)
+		api.GET("/jobs/:id/artifacts-zip", handlers.DownloadAllArtifacts) // NEW
 	}
 
 	// Health check

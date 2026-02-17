@@ -45,6 +45,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: automlops
+      DB_SSL_MODE: disable # New: Disable SSL for local development
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""

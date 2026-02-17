@@ -15,6 +15,7 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+	DBSSLMode  string // NEW: SSL mode configuration
 
 	// Redis
 	RedisHost     string
@@ -43,6 +44,7 @@ func Load() *Config {
 		DBUser:     getEnv("DB_USER", "postgres"),
 		DBPassword: getEnv("DB_PASSWORD", "postgres"),
 		DBName:     getEnv("DB_NAME", "automlops"),
+		DBSSLMode:  getEnv("DB_SSL_MODE", "require"), // NEW: Default to "require" for production
 
 		// Redis
 		RedisHost:     getEnv("REDIS_HOST", "localhost"),
@@ -82,5 +84,5 @@ func (c *Config) GetDBConnectionString() string {
 		" user=" + c.DBUser +
 		" password=" + c.DBPassword +
 		" dbname=" + c.DBName +
-		" sslmode=require"
+		" sslmode=" + c.DBSSLMode // UPDATED: Use configurable SSL mode
 }

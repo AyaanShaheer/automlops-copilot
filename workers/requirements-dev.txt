@@ -1,0 +1,14 @@
+# Testing
+pytest
+pytest-cov
+pytest-asyncio
+pytest-mock
+
+# Linting
+flake8
+black
+pylint
+
+# Type checking
+mypy
+types-redis

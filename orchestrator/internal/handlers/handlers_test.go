@@ -15,7 +15,7 @@ func TestHealthCheckHandler(t *testing.T) {
 
 	// Create a test router
 	router := gin.Default()
-	
+
 	// Register the health check route
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

@@ -1,0 +1,140 @@
+name: CD - Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["CI - Orchestrator", "CI - Worker"]
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  REGISTRY: registry.digitalocean.com/automlops
+  NAMESPACE: automlops
+
+jobs:
+  deploy:
+    name: Deploy to DOKS
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_API_TOKEN }}
+
+      - name: Save kubeconfig
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ secrets.DO_CLUSTER_NAME }}
+
+      - name: Verify cluster connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Get short SHA
+        id: sha
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Update Orchestrator deployment
+        run: |
+          kubectl set image deployment/orchestrator \
+            orchestrator=${{ env.REGISTRY }}/orchestrator:${{ steps.sha.outputs.short_sha }} \
+            -n ${{ env.NAMESPACE }}
+          
+          # Also update to latest tag
+          kubectl set image deployment/orchestrator \
+            orchestrator=${{ env.REGISTRY }}/orchestrator:latest \
+            -n ${{ env.NAMESPACE }}
+
+      - name: Update Worker deployment
+        run: |
+          kubectl set image deployment/worker \
+            worker=${{ env.REGISTRY }}/worker:${{ steps.sha.outputs.short_sha }} \
+            -n ${{ env.NAMESPACE }}
+          
+          # Also update to latest tag
+          kubectl set image deployment/worker \
+            worker=${{ env.REGISTRY }}/worker:latest \
+            -n ${{ env.NAMESPACE }}
+
+      - name: Wait for Orchestrator rollout
+        run: |
+          kubectl rollout status deployment/orchestrator -n ${{ env.NAMESPACE }} --timeout=5m
+
+      - name: Wait for Worker rollout
+        run: |
+          kubectl rollout status deployment/worker -n ${{ env.NAMESPACE }} --timeout=5m
+
+      - name: Get deployment status
+        run: |
+          echo "=== Orchestrator Pods ==="
+          kubectl get pods -n ${{ env.NAMESPACE }} -l app=orchestrator
+          
+          echo "=== Worker Pods ==="
+          kubectl get pods -n ${{ env.NAMESPACE }} -l app=worker
+          
+          echo "=== Recent Events ==="
+          kubectl get events -n ${{ env.NAMESPACE }} --sort-by='.lastTimestamp' | tail -20
+
+      - name: Health check - Orchestrator
+        run: |
+          # Get the LoadBalancer IP or ClusterIP
+          ORCHESTRATOR_URL=$(kubectl get svc nginx-proxy -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          
+          if [ -z "$ORCHESTRATOR_URL" ]; then
+            echo "LoadBalancer IP not found, using port-forward for health check"
+            kubectl port-forward -n ${{ env.NAMESPACE }} svc/orchestrator 8080:8080 &
+            PF_PID=$!
+            sleep 5
+            ORCHESTRATOR_URL="localhost"
+          fi
+          
+          # Health check with retry
+          for i in {1..10}; do
+            if curl -f http://${ORCHESTRATOR_URL}:8080/health; then
+              echo "✅ Orchestrator health check passed"
+              exit 0
+            fi
+            echo "⏳ Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+          
+          echo "❌ Orchestrator health check failed after 10 attempts"
+          exit 1
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "🔄 Deployment failed, rolling back..."
+          kubectl rollout undo deployment/orchestrator -n ${{ env.NAMESPACE }}
+          kubectl rollout undo deployment/worker -n ${{ env.NAMESPACE }}
+          
+          echo "⏳ Waiting for rollback to complete..."
+          kubectl rollout status deployment/orchestrator -n ${{ env.NAMESPACE }} --timeout=3m
+          kubectl rollout status deployment/worker -n ${{ env.NAMESPACE }} --timeout=3m
+          
+          echo "✅ Rollback completed"
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "🚀 Deployment completed successfully!"
+          echo "📦 Image tags: ${{ steps.sha.outputs.short_sha }}, latest"
+          echo ""
+          echo "Orchestrator: ${{ env.REGISTRY }}/orchestrator:${{ steps.sha.outputs.short_sha }}"
+          echo "Worker: ${{ env.REGISTRY }}/worker:${{ steps.sha.outputs.short_sha }}"
+
+      - name: Send deployment notification
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            echo "✅ Deployment to Kubernetes completed successfully"
+          else
+            echo "❌ Deployment to Kubernetes failed"
+          fi

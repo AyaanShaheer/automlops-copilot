@@ -91,6 +91,9 @@ No manual configuration. No boilerplate. Just intelligent automation.
             DigitalOcean Kubernetes (DOKS)
                     nyc3 region
 ```
+Phase 2: System Architecture
+
+<img width="2816" height="1536" alt="Gemini_Generated_Image_ac7d73ac7d73ac7d" src="https://github.com/user-attachments/assets/553bc169-e14a-47f7-8a19-66e7143daca8" />
 
 ---
 
@@ -122,8 +125,8 @@ No manual configuration. No boilerplate. Just intelligent automation.
 
 ### **DevOps**
 - **Containerization:** Docker + Multi-stage builds
-- **CI/CD:** GitHub Actions (TODO)
-- **Monitoring:** Prometheus + Grafana (TODO)
+- **CI/CD:** GitHub Actions 
+- **Monitoring:** Prometheus + Grafana 
 
 ---
 
@@ -517,7 +520,7 @@ kubectl logs -n automlops -l app=worker --tail=50
 - [✅] Monitoring & Observability
 - [✅] Complete testing
 
-### **Phase 4: Production Hardening** 🔮 FUTURE
+### **Phase 3: Production Hardening** 🔮 FUTURE
 - [ ] Distributed tracing (Jaeger)
 - [ ] Rate limiting and quotas
 - [ ] Multi-tenancy support
@@ -529,7 +532,7 @@ kubectl logs -n automlops -l app=worker --tail=50
 
 | Name | Role | Responsibilities |
 |------|------|------------------|
-| **Ayaan Shaheer** | Lead DevOps & AI Systems Engineer | Kubernetes, Docker, Go orchestrator, infrastructure |
+| **Ayaan Shaheer** | Lead DevOps & AI Systems Engineer | Kubernetes, Docker, Go orchestrator, infrastructure, AI based CI/CD, Nginx Reverse Proxy |
 | **Saif** | Frontend Engineer | React UI, user experience, real-time updates |
 | **Zain** | AI/ML Engineer | Python worker, LLM integration, code generation |
 | **Afzaal** | Project Coordinator | Project Management, Documentation, Presentation |
@@ -584,6 +587,7 @@ For major changes, please open an issue first to discuss.
 **Built with ❤️ for the DigitalOcean AI Hackathon 2026**
 
 **⭐ Star this repo if you find it useful!**
+
 
 
 

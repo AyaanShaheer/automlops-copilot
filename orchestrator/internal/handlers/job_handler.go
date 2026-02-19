@@ -88,6 +88,15 @@ func UpdateJobStatus(c *gin.Context) {
 		PythonFiles  int    `json:"python_files"`
 		Notebooks    int    `json:"notebooks"`
 		Frameworks   string `json:"frameworks"`
+
+		// Phase 2 fields
+		GitHubRepoURL string `json:"github_repo_url"`
+		DeploymentURL string `json:"deployment_url"`
+
+		// NEW: CI/CD config URLs
+		GitHubActionsURL string `json:"github_actions_url"`
+		GitLabCIURL      string `json:"gitlab_ci_url"`
+		JenkinsfileURL   string `json:"jenkinsfile_url"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -130,6 +139,28 @@ func UpdateJobStatus(c *gin.Context) {
 
 	if req.Frameworks != "" {
 		updates["frameworks"] = req.Frameworks
+	}
+
+	// Phase 2 fields
+	if req.GitHubRepoURL != "" {
+		updates["github_repo_url"] = req.GitHubRepoURL
+	}
+
+	if req.DeploymentURL != "" {
+		updates["deployment_url"] = req.DeploymentURL
+	}
+
+	// NEW: CI/CD config URLs
+	if req.GitHubActionsURL != "" {
+		updates["github_actions_url"] = req.GitHubActionsURL
+	}
+
+	if req.GitLabCIURL != "" {
+		updates["gitlab_ci_url"] = req.GitLabCIURL
+	}
+
+	if req.JenkinsfileURL != "" {
+		updates["jenkinsfile_url"] = req.JenkinsfileURL
 	}
 
 	if req.Status == string(models.StatusCompleted) || req.Status == string(models.StatusFailed) {

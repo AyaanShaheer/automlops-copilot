@@ -29,14 +29,16 @@ from agent.src.generators.training_generator import TrainingScriptGenerator
 from agent.src.generators.fastapi_generator import FastAPIGenerator
 
 # Phase 2 generators (from agent)
-from agent.src.generators.github_actions_generator import GitHubActionsGenerator as AgentGitHubActionsGenerator
+from agent.src.generators.github_actions_generator import (
+    GitHubActionsGenerator as AgentGitHubActionsGenerator,
+)
 from agent.src.generators.k8s_generator import KubernetesGenerator
 
 # CI/CD Generators (from workers - NEW!)
 from workers.src.generators import (
     GitHubActionsGenerator,
     GitLabCIGenerator,
-    JenkinsGenerator
+    JenkinsGenerator,
 )
 
 # Managers
@@ -167,16 +169,16 @@ def sanitize_project_name(repo_url, job_id):
 def generate_ci_configs(analysis_data, llm_client):
     """
     Generate all CI/CD configurations using LLM
-    
+
     Args:
         analysis_data: Repository analysis results
         llm_client: LLM client (Groq or Gemini)
-        
+
     Returns:
         dict: CI configurations {filename: content}
     """
     configs = {}
-    
+
     try:
         # GitHub Actions
         github_gen = GitHubActionsGenerator(llm_client, analysis_data)
@@ -184,7 +186,7 @@ def generate_ci_configs(analysis_data, llm_client):
         logger.info("✅ GitHub Actions workflow generated")
     except Exception as e:
         logger.error(f"GitHub Actions generation failed: {e}")
-    
+
     try:
         # GitLab CI
         gitlab_gen = GitLabCIGenerator(llm_client, analysis_data)
@@ -192,7 +194,7 @@ def generate_ci_configs(analysis_data, llm_client):
         logger.info("✅ GitLab CI configuration generated")
     except Exception as e:
         logger.error(f"GitLab CI generation failed: {e}")
-    
+
     try:
         # Jenkins
         jenkins_gen = JenkinsGenerator(llm_client, analysis_data)
@@ -200,7 +202,7 @@ def generate_ci_configs(analysis_data, llm_client):
         logger.info("✅ Jenkinsfile generated")
     except Exception as e:
         logger.error(f"Jenkins generation failed: {e}")
-    
+
     return configs
 
 
@@ -289,7 +291,9 @@ def process_job(job_id, repo_url):
 
         if ENABLE_CICD_GENERATION:
             try:
-                logger.info(f"Generating AI-powered CI/CD configurations for job {job_id}")
+                logger.info(
+                    f"Generating AI-powered CI/CD configurations for job {job_id}"
+                )
 
                 # Generate CI/CD configs using LLM
                 ci_configs = generate_ci_configs(analysis, llm)
@@ -306,16 +310,15 @@ def process_job(job_id, repo_url):
                     for config_filename, config_content in ci_configs.items():
                         # Clean filename for S3 key
                         s3_key = f"jobs/{job_id}/ci/{config_filename.replace('/', '-')}"
-                        
+
                         # Upload to S3
                         s3_manager.upload_file(
-                            file_path=str(output_dir / config_filename),
-                            s3_key=s3_key
+                            file_path=str(output_dir / config_filename), s3_key=s3_key
                         )
-                        
+
                         # Generate S3 URL
                         s3_url = f"https://{S3_BUCKET}.{S3_ENDPOINT}/{s3_key}"
-                        
+
                         # Map to appropriate URL variable
                         if ".github/workflows/train.yml" in config_filename:
                             github_actions_url = s3_url
@@ -323,7 +326,7 @@ def process_job(job_id, repo_url):
                             gitlab_ci_url = s3_url
                         elif "Jenkinsfile" in config_filename:
                             jenkinsfile_url = s3_url
-                        
+
                         logger.info(f"Uploaded {config_filename} to S3: {s3_url}")
 
                 logger.success(f"✅ Generated {len(ci_configs)} CI/CD configurations")
@@ -339,8 +342,7 @@ def process_job(job_id, repo_url):
         if ENABLE_GITHUB_PUSH and github_client:
             project_name = sanitize_project_name(repo_url, job_id)
             repo = github_client.create_repository(
-                f"{project_name}-automlops", 
-                description="Auto generated ML API"
+                f"{project_name}-automlops", description="Auto generated ML API"
             )
             github_repo_url = repo.get("html_url")
             github_client.push_code(

@@ -1,4 +1,3 @@
-
 """
 Prompts for CI/CD configuration generation
 """
@@ -54,18 +53,18 @@ Output ONLY valid Groovy/Jenkinsfile syntax without any explanations or markdown
 def get_ci_generation_prompt(ci_type: str, context: dict) -> str:
     """
     Get system prompt for CI generation
-    
+
     Args:
         ci_type: Type of CI (github, gitlab, jenkins)
         context: Repository context
-        
+
     Returns:
         str: System prompt
     """
     prompts = {
-        'github': GITHUB_ACTIONS_SYSTEM_PROMPT,
-        'gitlab': GITLAB_CI_SYSTEM_PROMPT,
-        'jenkins': JENKINS_SYSTEM_PROMPT
+        "github": GITHUB_ACTIONS_SYSTEM_PROMPT,
+        "gitlab": GITLAB_CI_SYSTEM_PROMPT,
+        "jenkins": JENKINS_SYSTEM_PROMPT,
     }
-    
+
     return prompts.get(ci_type, GITHUB_ACTIONS_SYSTEM_PROMPT)

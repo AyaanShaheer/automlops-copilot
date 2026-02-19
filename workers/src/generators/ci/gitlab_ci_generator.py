@@ -1,39 +1,40 @@
 """
 GitLab CI configuration generator
 """
+
 from workers.src.generators.ci.base_generator import BaseCIGenerator
 from loguru import logger
 
 
 class GitLabCIGenerator(BaseCIGenerator):
     """Generate GitLab CI configuration for ML training"""
-    
+
     def get_filename(self) -> str:
         return ".gitlab-ci.yml"
-    
+
     def generate(self) -> str:
         """Generate GitLab CI configuration"""
         logger.info(f"Generating GitLab CI config for {self.repo_name}")
-        
+
         prompt = self._build_prompt()
         config = self._call_llm(prompt)
-        
+
         # Clean up the response
         config = self._clean_yaml(config)
-        
+
         logger.info("GitLab CI configuration generated successfully")
         return config
-    
+
     def _build_prompt(self) -> str:
         """Build LLM prompt for GitLab CI generation"""
         context = self._build_context()
-        
+
         gpu_section = ""
         if self.has_gpu:
             gpu_section = """
 - Configure GPU runners
 - Set up CUDA environment"""
-        
+
         prompt = f"""You are an expert DevOps engineer. Generate a production-ready GitLab CI configuration for training a machine learning model.
 
 {context}
@@ -52,22 +53,22 @@ Output ONLY the complete .gitlab-ci.yml file content. Do not include explanation
 Start with: stages:"""
 
         return prompt
-    
+
     def _clean_yaml(self, yaml_content: str) -> str:
         """Clean LLM output to get pure YAML"""
         if "```yaml" in yaml_content:
             yaml_content = yaml_content.split("```yaml").split("```")
         elif "```" in yaml_content:
             yaml_content = yaml_content.split("```").split("```")
-        
+
         return yaml_content.strip()
-    
+
     def _get_fallback_config(self) -> str:
         """Fallback GitLab CI configuration"""
         gpu_tags = ""
         if self.has_gpu:
             gpu_tags = "\n  tags:\n    - gpu"
-        
+
         return f"""stages:
   - test
   - train
@@ -119,4 +120,3 @@ deploy:
     - main
   when: manual
 """
-

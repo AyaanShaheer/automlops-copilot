@@ -1,39 +1,40 @@
 """
 GitHub Actions workflow generator
 """
+
 from workers.src.generators.ci.base_generator import BaseCIGenerator
 from loguru import logger
 
 
 class GitHubActionsGenerator(BaseCIGenerator):
     """Generate GitHub Actions workflows for ML training"""
-    
+
     def get_filename(self) -> str:
         return ".github/workflows/train.yml"
-    
+
     def generate(self) -> str:
         """Generate GitHub Actions workflow for ML training"""
         logger.info(f"Generating GitHub Actions workflow for {self.repo_name}")
-        
+
         prompt = self._build_prompt()
         config = self._call_llm(prompt)
-        
+
         # Clean up the response
         config = self._clean_yaml(config)
-        
+
         logger.info("GitHub Actions workflow generated successfully")
         return config
-    
+
     def _build_prompt(self) -> str:
         """Build LLM prompt for GitHub Actions generation"""
         context = self._build_context()
-        
+
         gpu_section = ""
         if self.has_gpu:
             gpu_section = """
 - Configure GPU support (CUDA)
 - Use self-hosted runners with GPU or GitHub-hosted GPU runners"""
-        
+
         prompt = f"""You are an expert DevOps engineer. Generate a production-ready GitHub Actions workflow for training a machine learning model.
 
 {context}
@@ -53,7 +54,7 @@ Output ONLY the complete YAML workflow file content. Do not include explanations
 Start with: name: Train ML Model"""
 
         return prompt
-    
+
     def _clean_yaml(self, yaml_content: str) -> str:
         """Clean LLM output to get pure YAML"""
         # Remove markdown code blocks if present
@@ -61,9 +62,9 @@ Start with: name: Train ML Model"""
             yaml_content = yaml_content.split("```yaml").split("```")[1]
         elif "```" in yaml_content:
             yaml_content = yaml_content.split("```").split("```")[0]
-        
+
         return yaml_content.strip()
-    
+
     def _get_fallback_config(self) -> str:
         """Fallback GitHub Actions workflow"""
         gpu_jobs = ""
@@ -74,7 +75,7 @@ Start with: name: Train ML Model"""
         with:
           cuda: '11.8.0'
 """
-        
+
         return f"""name: Train ML Model
 
 on:

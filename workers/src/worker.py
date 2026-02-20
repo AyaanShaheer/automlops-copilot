@@ -305,29 +305,18 @@ def process_job(job_id, repo_url):
                     config_path.write_text(config_content)
                     logger.info(f"Saved {config_filename} to disk")
 
-                # Upload CI configs to S3 if enabled
-                if ENABLE_S3_UPLOAD and s3_manager:
-                    for config_filename, config_content in ci_configs.items():
-                        # Clean filename for S3 key
-                        s3_key = f"jobs/{job_id}/ci/{config_filename.replace('/', '-')}"
+                # CI configs will be uploaded by upload_directory below with correct paths
+                # e.g. jobs/{id}/.github/workflows/train.yml, jobs/{id}/.gitlab-ci.yml
+                for config_filename, config_content in ci_configs.items():
+                    s3_key = f"jobs/{job_id}/{config_filename}"
+                    s3_url = f"https://{S3_BUCKET}.{S3_ENDPOINT}/{s3_key}"
 
-                        # Upload to S3
-                        s3_manager.upload_file(
-                            file_path=str(output_dir / config_filename), s3_key=s3_key
-                        )
-
-                        # Generate S3 URL
-                        s3_url = f"https://{S3_BUCKET}.{S3_ENDPOINT}/{s3_key}"
-
-                        # Map to appropriate URL variable
-                        if ".github/workflows/train.yml" in config_filename:
-                            github_actions_url = s3_url
-                        elif ".gitlab-ci.yml" in config_filename:
-                            gitlab_ci_url = s3_url
-                        elif "Jenkinsfile" in config_filename:
-                            jenkinsfile_url = s3_url
-
-                        logger.info(f"Uploaded {config_filename} to S3: {s3_url}")
+                    if ".github/workflows/train.yml" in config_filename:
+                        github_actions_url = s3_url
+                    elif ".gitlab-ci.yml" in config_filename:
+                        gitlab_ci_url = s3_url
+                    elif "Jenkinsfile" in config_filename:
+                        jenkinsfile_url = s3_url
 
                 logger.success(f"✅ Generated {len(ci_configs)} CI/CD configurations")
 

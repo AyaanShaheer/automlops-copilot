@@ -52,13 +52,12 @@ export default function CodeViewer({ artifacts, jobId, onClose }: CodeViewerProp
   };
 
   const downloadFile = (filename: string) => {
-    // Use the flat basename for individual download (backend resolves from S3 key)
     const encodedPath = encodeURIComponent(filename);
-    window.open(`${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${jobId}/artifacts/${encodedPath}`, '_blank');
+    window.open(`/api/jobs/${jobId}/artifacts/${encodedPath}`, '_blank');
   };
 
   const downloadAllAsZip = () => {
-    window.open(`${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${jobId}/artifacts-zip`, '_blank');
+    window.open(`/api/jobs/${jobId}/artifacts-zip`, '_blank');
   };
 
   return (

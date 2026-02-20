@@ -36,13 +36,7 @@ export interface ListJobsResponse {
 
 export interface ArtifactsResponse {
   job_id: string;
-  artifacts: {
-    'Dockerfile'?: string;
-    'training_wrapper.py'?: string;
-    'app.py'?: string;
-    'requirements.txt'?: string;
-    'analysis.json'?: string;
-  };
+  artifacts: Record<string, string>;
 }
 
 const api = axios.create({

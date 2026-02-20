@@ -60,22 +60,27 @@ func (s *S3Client) GetFileContent(key string) (string, error) {
 func (s *S3Client) ListJobArtifacts(jobID string) (map[string]string, error) {
 	artifacts := make(map[string]string)
 
-	// List of expected files
-	files := []string{
-		"Dockerfile",
-		"training_wrapper.py",
-		"app.py",
-		"requirements.txt",
-		"analysis.json",
-	}
-
 	prefix := fmt.Sprintf("jobs/%s/", jobID)
 
-	for _, filename := range files {
-		key := prefix + filename
+	// Use ListObjectsV2 to discover ALL files dynamically (including ci/ subfolder)
+	result, err := s.client.ListObjectsV2(&s3.ListObjectsV2Input{
+		Bucket: aws.String(s.bucket),
+		Prefix: aws.String(prefix),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, obj := range result.Contents {
+		key := aws.StringValue(obj.Key)
+		// Strip the job prefix to get the relative filename (e.g. "ci/github-actions.yml")
+		relPath := key[len(prefix):]
+		if relPath == "" {
+			continue
+		}
 		content, err := s.GetFileContent(key)
 		if err == nil {
-			artifacts[filename] = content
+			artifacts[relPath] = content
 		}
 	}
 

@@ -63,8 +63,8 @@ func main() {
 
 		// Artifact routes
 		api.GET("/jobs/:id/artifacts", handlers.GetArtifacts)
-		api.GET("/jobs/:id/artifacts/:filename", handlers.DownloadArtifact)
-		api.GET("/jobs/:id/artifacts-zip", handlers.DownloadAllArtifacts) // NEW
+		api.GET("/jobs/:id/artifacts-zip", handlers.DownloadAllArtifacts)
+		api.GET("/jobs/:id/artifacts/*filename", handlers.DownloadArtifact)
 	}
 
 	// Health check

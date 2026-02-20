@@ -6,28 +6,44 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Copy, Check, Download, X, PackageOpen } from 'lucide-react';
 
 interface CodeViewerProps {
-  artifacts: {
-    'Dockerfile'?: string;
-    'training_wrapper.py'?: string;
-    'app.py'?: string;
-    'requirements.txt'?: string;
-    'analysis.json'?: string;
-  };
+  artifacts: Record<string, string>;
   jobId: string;
   onClose: () => void;
 }
 
+function getLanguage(filename: string): string {
+  if (filename.endsWith('.py')) return 'python';
+  if (filename.endsWith('.json')) return 'json';
+  if (filename.endsWith('.yml') || filename.endsWith('.yaml')) return 'yaml';
+  if (filename.endsWith('.txt')) return 'text';
+  if (filename === 'Dockerfile') return 'docker';
+  if (filename.includes('Jenkinsfile')) return 'groovy';
+  return 'text';
+}
+
+function getIcon(filename: string): string {
+  if (filename === 'Dockerfile') return '🐳';
+  if (filename.includes('training')) return '🚂';
+  if (filename === 'app.py') return '⚡';
+  if (filename.endsWith('requirements.txt')) return '📦';
+  if (filename.endsWith('.json')) return '📊';
+  if (filename.includes('github')) return '🐙';
+  if (filename.includes('gitlab')) return '🦊';
+  if (filename.includes('jenkins')) return '🏗️';
+  if (filename.endsWith('.yml') || filename.endsWith('.yaml')) return '⚙️';
+  return '📄';
+}
+
 export default function CodeViewer({ artifacts, jobId, onClose }: CodeViewerProps) {
-  const [activeTab, setActiveTab] = useState<string>('Dockerfile');
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
 
-  const tabs = [
-    { name: 'Dockerfile', language: 'docker', icon: '🐳' },
-    { name: 'training_wrapper.py', language: 'python', icon: '🚂' },
-    { name: 'app.py', language: 'python', icon: '⚡' },
-    { name: 'requirements.txt', language: 'text', icon: '📦' },
-    { name: 'analysis.json', language: 'json', icon: '📊' },
-  ];
+  const tabs = Object.keys(artifacts).map((name) => ({
+    name,
+    language: getLanguage(name),
+    icon: getIcon(name),
+  }));
+
+  const [activeTab, setActiveTab] = useState<string>(tabs[0]?.name || '');
 
   const copyToClipboard = (content: string, filename: string) => {
     navigator.clipboard.writeText(content);
@@ -36,7 +52,9 @@ export default function CodeViewer({ artifacts, jobId, onClose }: CodeViewerProp
   };
 
   const downloadFile = (filename: string) => {
-    window.open(`${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${jobId}/artifacts/${filename}`, '_blank');
+    // Use the flat basename for individual download (backend resolves from S3 key)
+    const encodedPath = encodeURIComponent(filename);
+    window.open(`${process.env.NEXT_PUBLIC_API_URL}/api/jobs/${jobId}/artifacts/${encodedPath}`, '_blank');
   };
 
   const downloadAllAsZip = () => {
@@ -72,31 +90,28 @@ export default function CodeViewer({ artifacts, jobId, onClose }: CodeViewerProp
         {/* Tabs */}
         <div className="flex gap-2 p-4 border-b border-gray-700 overflow-x-auto">
           {tabs.map((tab) => (
-            artifacts[tab.name as keyof typeof artifacts] && (
-              <button
-                key={tab.name}
-                onClick={() => setActiveTab(tab.name)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === tab.name
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+            <button
+              key={tab.name}
+              onClick={() => setActiveTab(tab.name)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === tab.name
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
                 }`}
-              >
-                <span>{tab.icon}</span>
-                {tab.name}
-              </button>
-            )
+            >
+              <span>{tab.icon}</span>
+              {tab.name}
+            </button>
           ))}
         </div>
 
         {/* Code Display */}
         <div className="flex-1 overflow-auto p-4">
-          {artifacts[activeTab as keyof typeof artifacts] ? (
+          {artifacts[activeTab] ? (
             <div className="relative">
               {/* Action Buttons */}
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 <button
-                  onClick={() => copyToClipboard(artifacts[activeTab as keyof typeof artifacts]!, activeTab)}
+                  onClick={() => copyToClipboard(artifacts[activeTab]!, activeTab)}
                   className="p-2 rounded-lg bg-gray-800/90 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors backdrop-blur-sm"
                   title="Copy to clipboard"
                 >
@@ -127,7 +142,7 @@ export default function CodeViewer({ artifacts, jobId, onClose }: CodeViewerProp
                 }}
                 showLineNumbers
               >
-                {artifacts[activeTab as keyof typeof artifacts] || ''}
+                {artifacts[activeTab] || ''}
               </SyntaxHighlighter>
             </div>
           ) : (

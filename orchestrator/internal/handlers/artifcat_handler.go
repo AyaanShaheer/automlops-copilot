@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"path/filepath"
+	"strings"
 
 	"github.com/AyaanShaheer/automlops-copilot/orchestrator/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -37,13 +37,18 @@ func GetArtifacts(c *gin.Context) {
 	})
 }
 
-// DownloadArtifact handles GET /api/jobs/:id/artifacts/:filename
+// DownloadArtifact handles GET /api/jobs/:id/artifacts/*filename
 func DownloadArtifact(c *gin.Context) {
 	jobID := c.Param("id")
 	filename := c.Param("filename")
 
-	// Security: validate filename to prevent directory traversal
-	if filepath.Base(filename) != filename {
+	// Remove leading slash that wildcard params include
+	if len(filename) > 0 && filename[0] == '/' {
+		filename = filename[1:]
+	}
+
+	// Security: prevent actual directory traversal (../) while allowing subfolders
+	if filename == "" || strings.Contains(filename, "..") {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filename"})
 		return
 	}
